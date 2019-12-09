@@ -16,7 +16,7 @@ end
 %% Read from serial (weird values)
 s = serialport('COM7',9600);
 s.NumBytesAvailable
-
+%%
 while 1
     data = read(s,1e3,"uint32");
     plot(data);
@@ -24,7 +24,7 @@ while 1
 end
 %% yet another approach (this one works, yet i disgree with values)
 clear ii
-dsplayit = zeros(1e3,1);
+dsplayit = zeros(1e4,1);
 ii =1;
 while 1
     dataraw = readline(s);
@@ -35,6 +35,16 @@ while 1
         plot(dsplayit)
         ii=1;
         pause(0.001);
-        dsplayit = zeros(1e3,1);
+        dsplayit = zeros(1e6,1);
     end
+end 
+%% Attempt signal meas
+clear ii
+dsplayit = zeros(1e4,1);
+ii =1;
+while ii<length(dsplayit)
+    dataraw = readline(s);
+    dsplayit(ii,1) = str2double(dataraw);
+    ii=ii+1;
+   
 end
