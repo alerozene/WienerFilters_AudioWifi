@@ -8,7 +8,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Arduino boards declaration
-PIN = 'D12';
+PIN = 'D11';
 ard = arduino('com7','uno');     % Transmitter
 % I do not use the second board from matlab in this example
 %ard2 = arduino('com12','micro'); % Receiver
@@ -36,14 +36,45 @@ noise_part = nfact*(min(audio_signal) + (abs(min(audio_signal))...
 
 
 %% Send h-l for testing
-tic
+% simplify audio signal by... getting rid of decimals
+%audio_send = round(audio_signal,2);
+audio_send = round(audio_signal,3);
+audio_send = (audio_send+.4);
+bin_send = upsample(audio_send,2);
+
+%% create audio for next section
+audio_pwm = audio_signal+0.5;
+audio_pwm = audio_pwm*5;
+
+%% Send audio perse
+clear ii ind
+ii = 0;
+ind = 1;
+
 while 1
-    
+    while ii <1000
+            writePWMVoltage(ard,PIN,0)
+            ii=ii+1;
+    end
+        
+    if t<length(audio_signal)
+        writePWMVoltage(ard,PIN,audio_pwm(ind,1));
+        ind = ind+1;
+        
+    else
+        writePWMVoltage(ard,PIN,0);
+    end
+end
+
+%%
+while 1
     writeDigitalPin(ard,PIN,1);
+    pause(1.5)
     writeDigitalPin(ard,PIN,0);
+    pause(2)
     
+%         writePWMVoltage(ard,PIN,5);
     
 end
-    
-    
-
+        
+        
