@@ -49,6 +49,10 @@ while ii<length(dsplayit)
    
 end
 %%
+clear all
+close all
+clc
+load pulse_in_signal11122019
 % Map back signal 5V 2e3 us
 sig = dsplayit;
 volt_raw = sig.*5/2e3;
@@ -57,7 +61,7 @@ audiosignal = volt_off-0.5;
 
 % Filter
 freqdom = fft(audiosignal);
-freqdom(abs(freqdom(:))>15)=0;
+freqdom(abs(freqdom(:))>1)=0;
 audioproc = ifft(freqdom);
 
 
