@@ -25,15 +25,14 @@ while ii<length(dsplayit)
     ii = ii+1;
 end 
 %%
-<<<<<<< HEAD
 % Map signal back (5V = 2e3 us)
-=======
+
 clear all
 close all
 clc
 load pulse_in_signal11122019
 % Map back signal 5V 2e3 us
->>>>>>> 743912f97739413e472e9a57455abb9e8a68e14a
+
 sig = dsplayit;
 % Convert from us to V
 volt_raw = sig.*5/2e3;
