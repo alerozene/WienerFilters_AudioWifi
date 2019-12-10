@@ -1,60 +1,38 @@
-% Receive incoming transmission from arduino connected to the tr receiver
-% and with the xdrf_pulsein.ino code loaded
+% Receive incoming transmission from arduino connected to the receiver
+% with the xdrf_pulsein.ino code loaded. Read from serial
 %  See also:
 % 
-% xdrf_pulseIn.ino, xdrf_emitter.m
+% xdrf_pulsein.ino, xdrf_emitter.m
 
-% Read incoming data from emitter
-ard2 = arduino('com7','micro'); % Receiver
-received = zeros(1e6,1);
-timer = 1;
-while timer<length(received)
-    received(timer,1) = readVoltage(ard2,'A5');
-    timer = timer+1;
-end
 
-%% Read from serial (weird values)
+%% Read from serial 
 s = serialport('COM7',9600);
+% check bytes available
 s.NumBytesAvailable
-%%
-while 1
-    data = read(s,1e3,"uint32");
-    plot(data);
-    pause(0.01);
-end
-%% yet another approach (this one works, yet i disgree with values)
+
+%% 
 clear ii
-dsplayit = zeros(1e4,1);
-ii =1;
-while 1
-    dataraw = readline(s);
-    datpoint = str2double(dataraw);
-    dsplayit(ii,1)=datpoint;
-    ii=ii+1;
-    if ii==length(dsplayit)
-        plot(dsplayit)
-        ii=1;
-        pause(0.001);
-        dsplayit = zeros(1e6,1);
-    end
-end 
-%% Attempt signal meas
-clear ii
+% vector for signal
 dsplayit = zeros(1e4,1);
 ii =1;
 while ii<length(dsplayit)
+    % Read one line of serial
     dataraw = readline(s);
-    dsplayit(ii,1) = str2double(dataraw);
-    ii=ii+1;
-   
-end
+    % format to double
+    datpoint = str2double(dataraw);
+    % store in vector
+    dsplayit(ii,1)=datpoint;
+    ii = ii+1;
+end 
 %%
-% Map back signal 5V 2e3 us
+% Map signal back (5V = 2e3 us)
 sig = dsplayit;
+% Convert from us to V
 volt_raw = sig.*5/2e3;
+% scale down to audio format
 volt_off = volt_raw./5;
+% mirror around 0
 audiosignal = volt_off-0.5;
-
 % Filter
 freqdom = fft(audiosignal);
 freqdom(abs(freqdom(:))>15)=0;
