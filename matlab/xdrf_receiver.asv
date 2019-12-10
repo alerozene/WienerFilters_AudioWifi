@@ -56,8 +56,5 @@ volt_off = volt_raw./5;
 audiosignal = volt_off-0.5;
 
 % Filter
-freqdom = fft(audiosignal);
-freqdom(abs(freqdom(:))>15)=0;
-audioproc = ifft(freqdom);
-
+freqdom = 
 
