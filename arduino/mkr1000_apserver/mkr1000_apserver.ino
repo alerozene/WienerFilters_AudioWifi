@@ -25,6 +25,8 @@ char pass[] = SECRET_PASS;    // your network password (use for WPA, or use as k
 int keyIndex = 0;                // your network key Index number (needed only for WEP)
 
 int status = WL_IDLE_STATUS;
+int incomingByte;
+double sinusoid;
 WiFiServer server(80);
 
 void setup() {
@@ -71,6 +73,7 @@ void setup() {
 
 
 void loop() {
+  
   // compare the previous status to the current status
   if (status != WiFi.status()) {
     // it has changed update the variable
@@ -109,9 +112,19 @@ void loop() {
             client.println("Content-type:text/html");
             client.println();
 
-            for(int ii=1;ii<100;ii++){
-              client.println(ii);
+            
+            
+            /*if(Serial.available()>0){
+              incomingByte = Serial.read();
+              client.println(incomingByte, DEC);
+            }*/
+
+            for(int ii=1;ii<10000;ii++){
+              sinusoid = sin(0.01*ii);
+              client.println(sinusoid);
               }
+              long stren = WiFi.RSSI();
+              client.println(stren);
 
             // The HTTP response ends with another blank line:
             client.println();
