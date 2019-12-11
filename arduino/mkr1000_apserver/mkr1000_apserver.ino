@@ -1,22 +1,41 @@
 /*
-  
+  WiFi Web Server LED Blink
+
+  A simple web server that lets you blink an LED via the web.
+  This sketch will create a new access point (with no password).
+  It will then launch a new server and print out the IP address
+  to the Serial monitor. From there, you can open that address in a web browser
+  to turn on and off the LED on pin 13.
+
+  If the IP address of your shield is yourAddress:
+    http://yourAddress/H turns the LED on
+    http://yourAddress/L turns it off
+
+  created 25 Nov 2012
+  by Tom Igoe
+  adapted to WiFi AP by Adafruit
  */
 
 #include <SPI.h>
 #include <WiFi101.h>
-char ssid[] = "wifimkr";        // your network SSID (name)
-int keyIndex = 0;            // your network key Index number (needed only for WEP)
+#include "arduino_secrets.h" 
+///////please enter your sensitive data in the Secret tab/arduino_secrets.h
+char ssid[] = "mkr1000";        // your network SSID (name)
+char pass[] = SECRET_PASS;    // your network password (use for WPA, or use as key for WEP)
+int keyIndex = 0;                // your network key Index number (needed only for WEP)
+
 int status = WL_IDLE_STATUS;
 WiFiServer server(80);
 
 void setup() {
-  
+  //Initialize serial and wait for port to open:
   Serial.begin(9600);
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
   }
 
-  
+  Serial.println("Access Point Web Server");
+
   // check for the presence of the shield:
   if (WiFi.status() == WL_NO_SHIELD) {
     Serial.println("WiFi shield not present");
@@ -28,7 +47,11 @@ void setup() {
   // you can override it with the following:
   // WiFi.config(IPAddress(10, 0, 0, 1));
 
-  
+  // print the network name (SSID);
+  Serial.print("Creating access point named: ");
+  Serial.println(ssid);
+
+  // Create open network. Change this line if you want to create an WEP network:
   status = WiFi.beginAP(ssid);
   if (status != WL_AP_LISTENING) {
     Serial.println("Creating access point failed");
@@ -86,17 +109,10 @@ void loop() {
             client.println("Content-type:text/html");
             client.println();
 
-            // Check for audio data from the serial port
-            
-            while(Serial.available() > 0) {
-              incombyte = Serial.read();
-              client.println(incombyte);
-            }
-            for(int i = 1; i<10;i++){
-              client.println(i);              
+            for(int ii=1;ii<100;ii++){
+              client.println(ii);
               }
-              
-            
+
             // The HTTP response ends with another blank line:
             client.println();
             // break out of the while loop:
@@ -108,14 +124,6 @@ void loop() {
         }
         else if (c != '\r') {    // if you got anything else but a carriage return character,
           currentLine += c;      // add it to the end of the currentLine
-        }      
-
-        // Check to see if the client request was "GET /H" or "GET /L":
-        if (currentLine.endsWith("GET /H")) {
-          //digitalWrite(led, HIGH);               // GET /H turns the LED on
-        }
-        if (currentLine.endsWith("GET /L")) {
-          //digitalWrite(led, LOW);                // GET /L turns the LED off
         }
       }
     }
