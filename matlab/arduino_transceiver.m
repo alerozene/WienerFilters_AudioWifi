@@ -41,11 +41,5 @@ while t<length(vec)
     
 end
 
-%%
-while 1
-    x=serial('COM11','BAUD', 9600);
-    fopen(x);
-    fscanf(x)
-end
 
 
