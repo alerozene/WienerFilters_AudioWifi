@@ -7,16 +7,18 @@ DATA->A5
 GND
  */
 
-#define rfReceivePin A5  //RF Receiver pin = Analog pin 5
-unsigned long duration;
-
-void setup() {
-  Serial.begin(9600);
-  pinMode(rfReceivePin, INPUT);
-}
-
-void loop() {
-  duration = pulseIn(rfReceivePin, HIGH);
-  Serial.println(duration);
-}
+ #define rfReceivePin A5  //RF Receiver pin = Analog pin 5
+ unsigned int data = 0;   //variable used to store received data
  
+ void setup(){
+   pinMode(ledPin, OUTPUT);
+   Serial.begin(9600);
+ }
+
+ void loop(){
+  data=analogRead(rfReceivePin);    //listen for data on Analog pin 5
+  Serial.print(data);               //print data to serial
+  Serial.print(",0,1023");          //print two lines to stabilize the plotter
+  Serial.println();
+  delay(2); 
+ }
