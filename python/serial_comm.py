@@ -1,67 +1,100 @@
-# -*- coding: utf-8 -*-
-"""
-Read audio file, then send it over serial to an ESP32 device
-
-NOTES:
-    -Must install serial module
-    -Look into pyAudio
-Created on Fri Dec 13 13:56:13 2019
-@author: arozenevallesp
-"""
 
 import serial
-import numpy
-import struct
+import time
 
-#create serial object
-ser = serial.Serial()
-ser.baudrate = 115200
-ser.port = 'COM14'
+startMarker = '<'
+endMarker = '>'
+dataStarted = False
+dataBuf = ""
+messageComplete = False
 
-a = numpy.arange(1.0,100.0)
-#Open port send data
-if(ser.isOpen() == False):
-    ser.open()
+#========================
+#========================
+    # the functions
 
-for x in range(len(a)):
-    b = a[x]
+def setupSerial(baudRate, serialPortName):
     
-    ser.write(0.1)
-    data = ser.read(4)
-    f_data, = struct.unpack('<f',data)
-    print(f_data)
+    global  serialPort
+    
+    serialPort = serial.Serial(port= serialPortName, baudrate = baudRate, timeout=0, rtscts=True)
+
+    print("Serial port " + serialPortName + " opened  Baudrate " + str(baudRate))
+
+    waitForArduino()
+
+#========================
+
+def sendToArduino(stringToSend):
+    
+        # this adds the start- and end-markers before sending
+    global startMarker, endMarker, serialPort
+    
+    stringWithMarkers = (startMarker)
+    stringWithMarkers += stringToSend
+    stringWithMarkers += (endMarker)
+
+    serialPort.write(stringWithMarkers.encode('utf-8')) # encode needed for Python3
+
+
+#==================
+
+def recvLikeArduino():
+
+    global startMarker, endMarker, serialPort, dataStarted, dataBuf, messageComplete
+
+    if serialPort.inWaiting() > 0 and messageComplete == False:
+        x = serialPort.read().decode("utf-8") # decode needed for Python3
+        
+        if dataStarted == True:
+            if x != endMarker:
+                dataBuf = dataBuf + x
+            else:
+                dataStarted = False
+                messageComplete = True
+        elif x == startMarker:
+            dataBuf = ''
+            dataStarted = True
+    
+    if (messageComplete == True):
+        messageComplete = False
+        return dataBuf
+    else:
+        return "XXX"
+
+#==================
+
+def waitForArduino():
+
+    # wait until the Arduino sends 'Arduino is ready' - allows time for Arduino reset
+    # it also ensures that any bytes left over from a previous message are discarded
+    
+    print("Waiting for Arduino to reset")
+    
+    msg = ""
+    while msg.find("Arduino is ready") == -1:
+        msg = recvLikeArduino()
+        if not (msg == 'XXX'):
+            print(msg)
 
 
 
-#
-"""
-#Open port send data
-if(ser.isOpen() == False):
-    ser.open()
-"""
+#====================
+#====================
+    # the program
 
 
-
-
-
-
-
-"""
-try:
-  ser = serial.Serial( # set parameters, in fact use your own :-)
-    port="COM4",
-    baudrate=9600,
-    bytesize=serial.SEVENBITS,
-    parity=serial.PARITY_EVEN,
-    stopbits=serial.STOPBITS_ONE
-  )
-  ser.isOpen() # try to open port, if possible print message and proceed with 'while True:'
-  print ("port is opened!")
-
-except IOError: # if port is already opened, close it and open it again and print message
-  ser.close()
-  ser.open()
-  print ("port was already open, was closed and opened again!")
-
-while True: # do something...
-"""
+setupSerial(115200, "COM14")
+count = 0
+prevTime = time.time()
+while True:
+            # check for a reply
+    arduinoReply = recvLikeArduino()
+    if not (arduinoReply == 'XXX'):
+        print ("Time %s  Reply %s" %(time.time(), arduinoReply))
+        
+        # send a message at intervals
+    if time.time() - prevTime > 1.0:
+        sendToArduino("this is a test " + str(count))
+        prevTime = time.time()
+        count += 1
+        
