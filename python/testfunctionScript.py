@@ -16,4 +16,5 @@ print(x)
 """
 
 serialPort = serial.Serial('COM11', 9600, timeout=0, rtscts=True)
-serialPort.write('Send stuff')
+serialPort.write(b'Send stuff\n')
+serialPort.close

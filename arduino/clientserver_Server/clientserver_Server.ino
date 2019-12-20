@@ -14,9 +14,6 @@ WiFiServer server(80);
 void setup() {
   //Initialize serial and wait for port to open:
   Serial.begin(9600);
-  while (!Serial) {
-    ; // wait for serial port to connect. Needed for native USB port only
-  }
 
   // check for the presence of the shield:
   if (WiFi.status() == WL_NO_SHIELD) {
@@ -43,17 +40,17 @@ void setup() {
 void loop() {
   
   WiFiClient client = server.available(); //gets a client connected to the server 
-  if (client && client.connected()) {
+  if (client && client.connected() && Serial.available()) {
     String request = client.readStringUntil('\n');
-    Serial.println(request);
-    client.print("response\n");
+    String sermessage = Serial.readStringUntil('\n');
+    client.println(sermessage);
     client.stop();
-  } 
+  }
+  else if (client && client.connected()){
+    client.println("empty\n");
+    client.stop();
+    }
 }
-
-
-
-
 
 void printWiFiStatus() {
   // print the SSID of the network you're attached to:
