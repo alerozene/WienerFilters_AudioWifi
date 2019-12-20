@@ -27,7 +27,7 @@
 char ssid[] = "mkr1000";        // your network SSID (name)
 char pass[] = "";    // your network password (use for WPA, or use as key for WEP)
 int keyIndex = 0;            // your network key Index number (needed only for WEP)
-
+IPAddress server(192,168,1,1);  
 int status = WL_IDLE_STATUS;
 // if you don't want to use DNS (and reduce your sketch size)
 // use the numeric IP instead of the name for the server:
@@ -40,7 +40,6 @@ WiFiClient client;
 void setup() {
   //Initialize serial and wait for port to open:
   Serial.begin(9600);
-  
 
   // check for the presence of the shield:
   if (WiFi.status() == WL_NO_SHIELD) {
@@ -48,8 +47,21 @@ void setup() {
     // don't continue:
     while (true);
   }
-
+  
+  /*
   // attempt to connect to WiFi network:
+  byte numSsid = WiFi.scanNetworks();
+  int wifishieldIP = 0;
+  for (int thisNet = 0; thisNet<numSsid; thisNet++) {
+    if (WiFi.SSID(thisNet)==ssid){
+      wifishieldIP = 1;      
+      }
+  }
+  if wifishieldIP == 0){
+    Serial.println("No emitter available");
+    while 1{}
+    }*/
+  
   while (status != WL_CONNECTED) {
     Serial.print("Attempting to connect to SSID: ");
     Serial.println(ssid);
