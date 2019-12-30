@@ -18,4 +18,4 @@ audio_signal = str2num(audio_data);
 sigstrength = audio_signal(length(audio_signal))
 audio_signal(length(audio_signal)) =[];
 plot(audio_signal)
-
+sound(audio_signal,1000)
