@@ -3,8 +3,8 @@
 % plotter
 
 % Arduino boards declaration 
-ard = arduino('com7','uno');     % Transmitter
-ard2 = arduino('com12','micro'); % Receiver
+ard = arduino('com10','uno');     % Transmitter
+ard2 = arduino('com7','micro'); % Receiver
 %% Communicate
 clf
 figure(1)

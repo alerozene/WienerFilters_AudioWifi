@@ -11,7 +11,7 @@ GND
  unsigned int data = 0;   //variable used to store received data
  
  void setup(){
-   pinMode(ledPin, OUTPUT);
+   //pinMode(ledPin, OUTPUT);
    Serial.begin(9600);
  }
 
