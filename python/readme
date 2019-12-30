@@ -5,7 +5,7 @@ import serial
 Traceback (most recent call last):
 
   File "<ipython-input-1-1730fcfe381f>", line 1, in <module>
-    import serial
+    import pyserial
 
 ModuleNotFoundError: No module named 'serial'
 ------------------------------------------------
