@@ -1,6 +1,9 @@
 /*
-  
-  
+  Last used Dec18.2019
+  for MKR1000
+  Creates an access point and when a client connects to it, generates a sinusoidal signal.
+  Using a computer with wifi, run matlab code mkr1000_readFromAP.m to read the sinusoid.
+  A. Rozene
  */
 
 #include <SPI.h>
