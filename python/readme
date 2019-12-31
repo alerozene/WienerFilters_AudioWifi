@@ -1,0 +1,12 @@
+Common errors
+
+------------------------------------------------
+import serial
+Traceback (most recent call last):
+
+  File "<ipython-input-1-1730fcfe381f>", line 1, in <module>
+    import pyserial
+
+ModuleNotFoundError: No module named 'serial'
+------------------------------------------------
+SOLUTION: go to conda and install the serial package [conda install serial]
