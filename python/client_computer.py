@@ -7,6 +7,7 @@ This is a temporary script file.
 
 import serial
 import time 
+import matplotlib.pyplot as plot
 try:
     s = serial.Serial('COM3', 9600, timeout=0, rtscts=True)
     
@@ -34,8 +35,16 @@ while 1:
 
 
 """
-  lst = []
-  for ii in range (0,5):
-      a = str(ii)
-      lst.append(a)
+/*Arduino code for serial communication with this .py file*/
+int a=0;
+void setup() {
+  Serial.begin(9600);
+}
+void loop() {
+  Serial.println(a);
+  a=a+1;
+  if(a==5000){
+    Serial.println("finito");
+    }
+}
 """

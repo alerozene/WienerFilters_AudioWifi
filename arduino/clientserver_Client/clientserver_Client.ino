@@ -6,6 +6,9 @@
 
 #include <SPI.h>
 #include <WiFi101.h>
+
+bool debug = false;
+
 ///////please enter your sensitive data in the Secret tab/arduino_secrets.h
 char ssid[] = "wifimkr1000";        // your network SSID (name)
 int keyIndex = 0;            // your network key Index number (needed only for WEP)
@@ -31,16 +34,22 @@ void setup() {
 
   // attempt to connect to WiFi network:
   while (status != WL_CONNECTED) {
-    Serial.print("Attempting to connect to SSID: ");
-    Serial.println(ssid);
+    if(debug){
+      Serial.print("Attempting to connect to SSID: ");
+      Serial.println(ssid);
+      }
     // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
     status = WiFi.begin(ssid);
     // wait 10 seconds for connection:
-    delay(10000);
+    delay(5000);
   }
-  Serial.println("Connected to wifi");
-  printWiFiStatus();  
-  
+  if(debug){
+    Serial.println("Connected to wifi");
+    printWiFiStatus();  
+    }
+    else{
+      Serial.println("Emitter_detected\n")
+      }
 }
 
 void loop() {
@@ -48,6 +57,9 @@ void loop() {
   if (client.connect({192,168,1,1}, 80)) {
   client.print("request\n");
   String response = client.readStringUntil('\n');
+  if(debug){
+    Serial.println(response);
+    }
   if(response != "empty"){
     Serial.println(response);
     client.stop();
