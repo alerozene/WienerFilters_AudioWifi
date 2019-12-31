@@ -6,56 +6,58 @@ Load data via serial to micro-controller board.
 @author: arozenevallesp
 """
 
-import serial
 import numpy
+import serial
+# Manually import tools from serial to avoid errors
+import serial.tools.list_ports 
+#for exiting the script in case of exceptions
+import sys         
 
+#%% Find port of the Arduino
 
-"""
-#Of course, this works for reading serial data
-serialPort = serial.Serial(port= 'COM11', '9600', timeout=0, rtscts=True)
-serialPort.inWaiting()
-x = serialPort.read().decode("utf-8")
-print(x)
-# List serial ports, in the description, arduino mkr1000 is indicated
-from serial.tools import list_ports
-x = list(list_ports.comports())
-print(x)
-"""
+#list ports
+lstports = list( serial.tools.list_ports.comports() )
+#create an empty port number
+port_nr = ''
 
+#find the port with arduino on its name
+for n in lstports:
+        if n.description.startswith( "Arduino" ):
+            # port name of the arduino prort
+            port_nr = n.device
 
-#%%
+#if no ports are found, exit the program
+if port_nr == '':
+    sys.exit("device not connected or not recognized")
+# alternative way of declaring
+# pp = [lstports[i].device for i in range(len(lstports)) if lstports[i].description.startswith("Arduino")]
+
+#%% Create serial object
 try:
-    serialPort = serial.Serial('COM15', 9600, timeout=0, rtscts=True)
-    
+    serialPort = serial.Serial(port_nr, 9600, timeout=0, rtscts=True)
 except serial.serialutil.SerialException:
     serialPort.close()
     serialPort.open()
-#%%
+
+#%% Generate random data to send to serial. Adapt it to protocol
 
 # seed 
 numpy.random.seed(1)
 # Array with random numbers
-values = numpy.random.rand(1000)
+values = numpy.random.rand(100)
 values = numpy.around(values, decimals=2)
 values = values.astype('|S5')
 values = [x+b'\n' for x in values]
-#%%
+
+#%% Send data to serial port
 
 try:
     serialPort.close()    
 except serial.serialutil.SerialException:
     serialPort.open()
     serialPort.close()
-#%%
+
 for x in range(len(values)): 
     serialPort.open()
     serialPort.write(values[x])
     serialPort.close()
-
-#%%
-
-
-for x in numpy.nditer(values):
-    print(x)
-
-
