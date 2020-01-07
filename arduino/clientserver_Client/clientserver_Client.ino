@@ -23,7 +23,7 @@ int status = WL_IDLE_STATUS;
 WiFiClient client;
 void setup() {
   //Initialize serial and wait for port to open:
-  Serial.begin(9600);
+  Serial.begin(230400);
   
   // check for the presence of the shield:
   if (WiFi.status() == WL_NO_SHIELD) {
@@ -48,7 +48,7 @@ void setup() {
     printWiFiStatus();  
     }
     else{
-      Serial.println("Emitter_detected\n")
+      Serial.println("Emitter_detected\n");
       }
 }
 
